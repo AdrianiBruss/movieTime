@@ -2,10 +2,21 @@
 
 namespace AppBundle\Services;
 
-
+use AppBundle\Entity\Movie;
+use Doctrine\ORM\EntityManager;
 use Goutte\Client;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Response;
 
 class TorrentService {
+
+
+    protected $doctrine;
+    protected $container;
+    public function __construct($doctrine,Container $container){
+        $this->doctrine = $doctrine;
+        $this->container = $container;
+    }
 
 //Infos à parser et à sauvegarder à propos du torrent :
 //- nom du torrent
@@ -31,7 +42,7 @@ class TorrentService {
         $crawler = $crawler
             ->filter('.torrentname .markeredBlock.torType.filmType>a:first-child')
             ->reduce(function($nodeCrawler, $i){
-                if($i<5){
+                if($i<2){
                     $this->getTorrentFromKickAss($nodeCrawler);
                 }
             });
@@ -40,7 +51,8 @@ class TorrentService {
 
     public function getTorrentFromKickAss($nodeCrawler){
 
-        $torrentArray = [];
+
+
         $client = new Client();
 
         $link = $nodeCrawler->first()->link()->getUri();
@@ -59,7 +71,6 @@ class TorrentService {
                 $imdbId = $node->text();
 
                 $title = $linkCrawler->filter('h1')->text();
-                $torrentArray[] = $title;
 
                 $magnet = "";
                 $magnetCheck = $linkCrawler
@@ -68,16 +79,12 @@ class TorrentService {
                         $magnet = $node->link()->getUri();
 
                     });
-                $torrentArray[] = $magnet;
 
                 $infoHash = preg_match('/btih:(?<path>\w*)&/', $magnet, $hash);
                 $infoHash = $hash['path'];
-                $torrentArray[] = $infoHash;
 
                 $seeders = $linkCrawler->filter('strong[itemprop="seeders"]')->text();
                 $leechers = $linkCrawler->filter('strong[itemprop="leechers"]')->text();
-                $torrentArray[] = $seeders;
-                $torrentArray[] = $leechers;
 
                 $quality = '';
                 $qualityCheck = $linkCrawler
@@ -92,7 +99,11 @@ class TorrentService {
 
                     });
 
-                $torrentArray[] = $quality;
+                $torrentArray = array();
+
+                array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality);
+
+                dump($torrentArray);
 
                 $this->getTorrentFromImdb($imdbId, $title);
 
@@ -103,11 +114,7 @@ class TorrentService {
 
     public function getTorrentFromImdb($imdbId, $title){
 
-
-        $movieArray = [];
-
-        $movieArray[] = $imdbId;
-        $movieArray[] = $title;
+        $movieArray = array();
 
         $client = new Client();
         $linkImbd = $client->request('GET', 'http://www.imdb.com/title/tt'.$imdbId);
@@ -126,10 +133,7 @@ class TorrentService {
 
             });
 
-        $movieArray[] = $dateRelease;
-
         $director = $linkImbd->filter('div[itemprop="director"] span')->text();
-        $movieArray[] = $director;
 
         $img = "";
         $imgCheck = $linkImbd
@@ -142,22 +146,65 @@ class TorrentService {
 
             });
 
-        $movieArray[] = $img;
-
         $rate = $linkImbd->filter('div.star-box-giga-star')->text();
-        $movieArray[] = $rate;
 
         $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
-        $movieArray[] = $ratingCount;
 
-        
+        array_push($movieArray, $imdbId, $title, $dateRelease, $director, $img, $rate, $ratingCount);
+
+        dump($movieArray);
+
+        $this->setImdbMovie($movieArray);
+
 
     }
 
-    public function setImdbMovie(){
+
+//    (film/torrent déjà présent ?
+//    torrent de qualité suffisante ?
+//    Rating imdb assez intéressant ?
+//    etc. ) et envoyer un email contenant les infos des nouveaux films (peut-être fait plus tard).
+
+    public function setImdbMovie($movieArray){
+
+        $movieRepo = $this->doctrine->getManager()->getRepository('AppBundle:Movie');
+
+        $movie = $movieRepo->findByMovieId($movieArray[0]);
+
+        if (!$movie){
+
+            $newMovie = new Movie();
+            $newMovie->setMovieId($movieArray[0]);
+            $newMovie->setTitle($movieArray[1]);
+            $newMovie->setYear(intval($movieArray[2]));
+            $newMovie->setDirector($movieArray[3]);
+            $newMovie->setImgUrl($movieArray[4]);
+            $newMovie->setRating(floatval($movieArray[5]));
+            $newMovie->setNbRates(floatval($movieArray[6]));
+
+            $validator = $this->container->get('validator');
+            $errorList = $validator->validate($newMovie);
+
+            if (count($errorList) > 0) {
+                return new Response(print_r($errorList, true));
+            } else {
+
+                $em = $this->doctrine->getEntityManager();
+                $em->persist($newMovie);
+                $em->flush();
+
+            }
+
+        }else{
+
+
+
+        }
 
     }
     public function setTorrentMovie(){
+
+
 
     }
 

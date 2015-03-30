@@ -9,3 +9,4 @@ services:
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
     torrents:
         class: AppBundle\Services\TorrentService
+        arguments: ["@doctrine", "@service_container"]
