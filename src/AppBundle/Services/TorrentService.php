@@ -7,12 +7,22 @@ use Goutte\Client;
 
 class TorrentService {
 
+//Infos à parser et à sauvegarder à propos du torrent :
 //- nom du torrent
 //- lien "magnet"
 //- info hash
 //- nombre de seeders
 //- nombre de leetchers
 //- qualité (ts, brrip, dvdrip, cam, etc...)
+//
+//Infos à parser et à sauvegarder à propos du film :
+//- titre
+//- id imdb
+//- année
+//- réalisateur du film
+//- url du poster principal (au moins 200px de large)
+//- rating
+//- nombre de votes
 
     public function getTorrentInfos(){
 
@@ -20,30 +30,59 @@ class TorrentService {
         $crawler = $client->request('GET', 'http://kickass.to/movies/?field=seeders&sorder=desc');
         $crawler = $crawler
             ->filter('.torrentname .markeredBlock.torType.filmType>a:first-child')
-            ->each(function($node){
+            ->reduce(function($nodeCrawler, $i){
+                if($i<5){
+                    $this->getTorrentFromKickAss($nodeCrawler);
+                }
+            });
 
-                $client = new Client();
+    }
 
-                $link = $node->first()->link()->getUri();
+    public function getTorrentFromKickAss($nodeCrawler){
 
-                $linkCrawler = $client->request('GET', $link);
+        $torrentArray = [];
+        $client = new Client();
 
-                $title = $linkCrawler->filter('h1');
+        $link = $nodeCrawler->first()->link()->getUri();
 
-                $magnet = $linkCrawler
+        $linkCrawler = $client->request('GET', $link);
+
+        $imdbIdCheck = $linkCrawler->filter('ul.block.overauto>li:nth-child(3)>a')
+
+            ->each(function($node) use (&$linkCrawler){
+
+                if(!$node){
+
+                    return false;
+
+                }
+                $imdbId = $node->text();
+
+                $title = $linkCrawler->filter('h1')->text();
+                $torrentArray[] = $title;
+
+                $magnet = "";
+                $magnetCheck = $linkCrawler
                     ->filter('a.magnetlinkButton')
-                    ->link()->getUri();
+                    ->each(function($node) use (&$magnet){
+                        $magnet = $node->link()->getUri();
+
+                    });
+                $torrentArray[] = $magnet;
 
                 $infoHash = preg_match('/btih:(?<path>\w*)&/', $magnet, $hash);
-
                 $infoHash = $hash['path'];
+                $torrentArray[] = $infoHash;
 
                 $seeders = $linkCrawler->filter('strong[itemprop="seeders"]')->text();
                 $leechers = $linkCrawler->filter('strong[itemprop="leechers"]')->text();
+                $torrentArray[] = $seeders;
+                $torrentArray[] = $leechers;
 
+                $quality = '';
                 $qualityCheck = $linkCrawler
                     ->filter('ul.block.overauto>li:nth-child(2)>span')
-                    ->each(function($node){
+                    ->each(function($node) use (&$quality){
 
                         if ($node){
                             $quality = $node->text();
@@ -53,8 +92,72 @@ class TorrentService {
 
                     });
 
+                $torrentArray[] = $quality;
+
+                $this->getTorrentFromImdb($imdbId, $title);
+
             });
 
+    }
+
+
+    public function getTorrentFromImdb($imdbId, $title){
+
+
+        $movieArray = [];
+
+        $movieArray[] = $imdbId;
+        $movieArray[] = $title;
+
+        $client = new Client();
+        $linkImbd = $client->request('GET', 'http://www.imdb.com/title/tt'.$imdbId);
+
+        $dateRelease = "";
+        $dateReleaseCheck = $linkImbd->filter('h1 span a')
+
+            ->each(function($node) use (&$dateRelease){
+
+                if ($node){
+                    $dateRelease = $node->text();
+
+                }else{
+                    $dateRelease = 'Not found';
+                }
+
+            });
+
+        $movieArray[] = $dateRelease;
+
+        $director = $linkImbd->filter('div[itemprop="director"] span')->text();
+        $movieArray[] = $director;
+
+        $img = "";
+        $imgCheck = $linkImbd
+            ->filter('div.image [itemprop="image"]')
+            ->each(function($node) use (&$img){
+
+                if ($node){
+                    $img = $node->attr('src');
+                }
+
+            });
+
+        $movieArray[] = $img;
+
+        $rate = $linkImbd->filter('div.star-box-giga-star')->text();
+        $movieArray[] = $rate;
+
+        $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
+        $movieArray[] = $ratingCount;
+
+        
+
+    }
+
+    public function setImdbMovie(){
+
+    }
+    public function setTorrentMovie(){
 
     }
 
