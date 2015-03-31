@@ -52,8 +52,6 @@ class TorrentService {
 
     public function getTorrentFromKickAss($nodeCrawler){
 
-
-
         $client = new Client();
 
         $link = $nodeCrawler->first()->link()->getUri();
@@ -87,24 +85,26 @@ class TorrentService {
                 $seeders = intval($linkCrawler->filter('strong[itemprop="seeders"]')->text());
                 $leechers = intval($linkCrawler->filter('strong[itemprop="leechers"]')->text());
 
-                $quality = '';
-                $qualityCheck = $linkCrawler
-                    ->filter('ul.block.overauto>li:nth-child(2)>span')
-                    ->each(function($node) use (&$quality){
+//                $quality = '';
+//                $qualityCheck = $linkCrawler
+//                    ->filter('ul.block.overauto>li:nth-child(2)>span')
+//                    ->each(function($node) use (&$quality){
+//
+//                        if ($node){
+//                            $quality = $node->text();
+//                        }else{
+//                            $quality = 'Not Found';
+//                        }
+//
+//                    });
 
-                        if ($node){
-                            $quality = $node->text();
-                        }else{
-                            $quality = 'Not Found';
-                        }
-
-                    });
+                $quality = $this->foundQuality($title);
 
                 $torrentArray = array();
 
                 array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality);
 
-//                dump($torrentArray);
+                dump($torrentArray);
 
                 $this->getTorrentFromImdb($imdbId, $torrentArray);
 
@@ -175,8 +175,8 @@ class TorrentService {
 
 
 //    (film/torrent déjà présent ? --- OK
-//    torrent de qualité suffisante ? CAM / TS/ HDRIP / BRRIP
-//    Rating imdb assez intéressant ?
+//    torrent de qualité suffisante ? CAM / TS/ HDRIP / BRRIP -- OK
+//    Rating imdb assez intéressant ? --- OK
 //    etc. ) et envoyer un email contenant les infos des nouveaux films (peut-être fait plus tard).
 
     public function setImdbMovie($movieArray, $torrentArray, $imdbId){
@@ -262,6 +262,22 @@ class TorrentService {
     public function extraTitle($input){
 
         return str_replace('"', '', trim(substr($input, 0, -16)));
+
+    }
+
+    public function foundQuality($input){
+
+//        dump($input);
+
+        $q_array = array('/\bcam\b/', '/\bts\b/', '/hdrip/', '/bdrip/', '/brrip/', '/xvid/', '/dvdrip/','/bluray/', '/webrip/');
+
+        foreach($q_array as $q){
+
+            if (preg_match( $q, strtolower($input), $matches )){
+                return $matches[0];
+            }
+
+        }
 
     }
 

@@ -58,7 +58,7 @@ class Torrent
 
     /**
      * @var string
-     *
+     * @Assert\Choice(callback = "getQualityFunction")
      * @ORM\Column(name="quality", type="string", length=255)
      */
     private $quality;
@@ -242,4 +242,17 @@ class Torrent
     {
         return $this->imdbId;
     }
+
+
+    /**
+     * getQuality function
+     * @return array
+     *
+     */
+    public static function getQualityFunction()
+    {
+        return array('hdrip','bdrip','brrip','xvid','dvdrip','bluray', 'webrip');
+    }
+
+
 }
