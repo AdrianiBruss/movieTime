@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Movie;
+use AppBundle\Entity\Torrent;
 use Doctrine\ORM\EntityManager;
 use Goutte\Client;
 use Symfony\Component\DependencyInjection\Container;
@@ -42,7 +43,7 @@ class TorrentService {
         $crawler = $crawler
             ->filter('.torrentname .markeredBlock.torType.filmType>a:first-child')
             ->reduce(function($nodeCrawler, $i){
-                if($i<2){
+                if($i<5){
                     $this->getTorrentFromKickAss($nodeCrawler);
                 }
             });
@@ -68,7 +69,7 @@ class TorrentService {
                     return false;
 
                 }
-                $imdbId = $node->text();
+                $imdbId = intval($node->text());
 
                 $title = $linkCrawler->filter('h1')->text();
 
@@ -83,8 +84,8 @@ class TorrentService {
                 $infoHash = preg_match('/btih:(?<path>\w*)&/', $magnet, $hash);
                 $infoHash = $hash['path'];
 
-                $seeders = $linkCrawler->filter('strong[itemprop="seeders"]')->text();
-                $leechers = $linkCrawler->filter('strong[itemprop="leechers"]')->text();
+                $seeders = intval($linkCrawler->filter('strong[itemprop="seeders"]')->text());
+                $leechers = intval($linkCrawler->filter('strong[itemprop="leechers"]')->text());
 
                 $quality = '';
                 $qualityCheck = $linkCrawler
@@ -103,21 +104,33 @@ class TorrentService {
 
                 array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality);
 
-                dump($torrentArray);
+//                dump($torrentArray);
 
-                $this->getTorrentFromImdb($imdbId, $title);
+                $this->getTorrentFromImdb($imdbId, $torrentArray);
 
             });
 
     }
 
 
-    public function getTorrentFromImdb($imdbId, $title){
+    public function getTorrentFromImdb($imdbId, $torrentArray){
 
         $movieArray = array();
 
         $client = new Client();
         $linkImbd = $client->request('GET', 'http://www.imdb.com/title/tt'.$imdbId);
+
+
+        $title = $linkImbd->filter('h1.header span[itemprop="name"]')->text();
+
+        $titleExtra = $linkImbd
+            ->filter('.title-extra')
+            ->each(function($node) use (&$title){
+                if($node){
+                    $title = $this->extraTitle(trim($node->text()));
+                }
+            });
+
 
         $dateRelease = "";
         $dateReleaseCheck = $linkImbd->filter('h1 span a')
@@ -125,7 +138,7 @@ class TorrentService {
             ->each(function($node) use (&$dateRelease){
 
                 if ($node){
-                    $dateRelease = $node->text();
+                    $dateRelease = intval($node->text());
 
                 }else{
                     $dateRelease = 'Not found';
@@ -146,26 +159,27 @@ class TorrentService {
 
             });
 
-        $rate = $linkImbd->filter('div.star-box-giga-star')->text();
+        $rate = floatval($linkImbd->filter('div.star-box-giga-star')->text());
 
         $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
+        $ratingCount = $this->commaToDot($ratingCount);
 
         array_push($movieArray, $imdbId, $title, $dateRelease, $director, $img, $rate, $ratingCount);
 
         dump($movieArray);
 
-        $this->setImdbMovie($movieArray);
+        $this->setImdbMovie($movieArray, $torrentArray, $imdbId);
 
 
     }
 
 
-//    (film/torrent déjà présent ?
-//    torrent de qualité suffisante ?
+//    (film/torrent déjà présent ? --- OK
+//    torrent de qualité suffisante ? CAM / TS/ HDRIP / BRRIP
 //    Rating imdb assez intéressant ?
 //    etc. ) et envoyer un email contenant les infos des nouveaux films (peut-être fait plus tard).
 
-    public function setImdbMovie($movieArray){
+    public function setImdbMovie($movieArray, $torrentArray, $imdbId){
 
         $movieRepo = $this->doctrine->getManager()->getRepository('AppBundle:Movie');
 
@@ -174,13 +188,13 @@ class TorrentService {
         if (!$movie){
 
             $newMovie = new Movie();
-            $newMovie->setMovieId($movieArray[0]);
+            $newMovie->setMovieId($imdbId);
             $newMovie->setTitle($movieArray[1]);
-            $newMovie->setYear(intval($movieArray[2]));
+            $newMovie->setYear($movieArray[2]);
             $newMovie->setDirector($movieArray[3]);
             $newMovie->setImgUrl($movieArray[4]);
-            $newMovie->setRating(floatval($movieArray[5]));
-            $newMovie->setNbRates(floatval($movieArray[6]));
+            $newMovie->setRating($movieArray[5]);
+            $newMovie->setNbRates($movieArray[6]);
 
             $validator = $this->container->get('validator');
             $errorList = $validator->validate($newMovie);
@@ -189,22 +203,65 @@ class TorrentService {
                 return new Response(print_r($errorList, true));
             } else {
 
-                $em = $this->doctrine->getEntityManager();
-                $em->persist($newMovie);
-                $em->flush();
+//                $em = $this->doctrine->getEntityManager();
+//                $em->persist($newMovie);
+//                $em->flush();
+
+                dump('Movie added ! ');
 
             }
 
-        }else{
+        }
 
+        $this->setTorrentMovie($torrentArray, $imdbId);
 
+    }
+    public function setTorrentMovie($torrentArray, $imdbId){
+
+        // checker si le hash du torrent existe dejà en base de données
+
+        $torrentRepo = $this->doctrine->getManager()->getRepository('AppBundle:Torrent');
+        $torrent = $torrentRepo->findByHash($torrentArray[2]);
+
+        if (!$torrent){
+
+            $newTorrent = new Torrent();
+            $newTorrent->setName($torrentArray[0]);
+            $newTorrent->setMagnet($torrentArray[1]);
+            $newTorrent->setHash($torrentArray[2]);
+            $newTorrent->setSeeders($torrentArray[3]);
+            $newTorrent->setLeechers($torrentArray[4]);
+            $newTorrent->setQuality($torrentArray[5]);
+            $newTorrent->setImdbId($imdbId);
+
+            $validator = $this->container->get('validator');
+            $errorList = $validator->validate($newTorrent);
+
+            if (count($errorList) > 0) {
+                return new Response(print_r($errorList, true));
+            } else {
+
+//                $em = $this->doctrine->getEntityManager();
+//                $em->persist($newTorrent);
+//                $em->flush();
+
+                dump('torrent added ! ');
+
+            }
 
         }
 
     }
-    public function setTorrentMovie(){
 
+    public function commaToDot($input){
 
+        return floatval(str_replace(',', '.', $input));
+
+    }
+
+    public function extraTitle($input){
+
+        return str_replace('"', '', trim(substr($input, 0, -16)));
 
     }
 

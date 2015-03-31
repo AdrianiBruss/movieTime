@@ -61,13 +61,19 @@ class Movie
     /**
      * @var float
      *
+     * @Assert\Range(
+     *      min = 6.0,
+     *      max = 10.0
+     * )
      * @ORM\Column(name="rating", type="float")
      */
     private $rating;
 
     /**
      * @var float
-     *
+     * @Assert\GreaterThan(
+     *     value = 10.000
+     * )
      * @ORM\Column(name="nbRates", type="float")
      */
     private $nbRates;

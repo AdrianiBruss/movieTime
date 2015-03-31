@@ -32,14 +32,14 @@ class Torrent
     /**
      * @var string
      * @Assert\NotBlank()
-     * @ORM\Column(name="magnet", type="string", length=255)
+     * @ORM\Column(name="magnet", type="text")
      */
     private $magnet;
 
     /**
      * @var string
      * @Assert\NotBlank()
-     * @ORM\Column(name="hash", type="string", length=255)
+     * @ORM\Column(name="hash", type="text")
      */
     private $hash;
 
