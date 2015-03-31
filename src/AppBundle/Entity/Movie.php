@@ -33,7 +33,7 @@ class Movie
      * @var integer
      * @Assert\NotBlank()
      * @ORM\Column(name="movieId", type="integer")
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Torrent", mappedBy="movieId")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Torrent", mappedBy="movieId", cascade={"persist", "remove"})
      */
     private $movieId;
 
@@ -77,6 +77,12 @@ class Movie
      * @ORM\Column(name="nbRates", type="float")
      */
     private $nbRates;
+
+    /**
+     * @var string
+     * @ORM\ManyToMany(targetEntity="Category", mappedBy="movie", cascade={"persist"})
+     */
+    private $category;
 
 
     /**
@@ -248,5 +254,45 @@ class Movie
     public function getNbRates()
     {
         return $this->nbRates;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add category
+     *
+     * @param \AppBundle\Entity\Category $category
+     * @return Movie
+     */
+    public function addCategory(\AppBundle\Entity\Category $category)
+    {
+        $this->category[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \AppBundle\Entity\Category $category
+     */
+    public function removeCategory(\AppBundle\Entity\Category $category)
+    {
+        $this->category->removeElement($category);
+    }
+
+    /**
+     * Get category
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 }

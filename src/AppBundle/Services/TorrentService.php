@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\Category;
 use AppBundle\Entity\Movie;
 use AppBundle\Entity\Torrent;
 use Doctrine\ORM\EntityManager;
@@ -131,6 +132,14 @@ class TorrentService {
                 }
             });
 
+        $category = [];
+        $categoryCheck = $linkImbd->filter('span[itemprop="genre"]')
+            ->each(function($node) use (&$category){
+               if($node){
+                   $category[] = $node->text();
+               }
+            });
+
 
         $dateRelease = "";
         $dateReleaseCheck = $linkImbd->filter('h1 span a')
@@ -164,7 +173,7 @@ class TorrentService {
         $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
         $ratingCount = $this->commaToDot($ratingCount);
 
-        array_push($movieArray, $imdbId, $title, $dateRelease, $director, $img, $rate, $ratingCount);
+        array_push($movieArray, $imdbId, $title, $dateRelease, $director, $img, $rate, $ratingCount, $category);
 
         dump($movieArray);
 
@@ -178,11 +187,11 @@ class TorrentService {
 //    torrent de qualité suffisante ? CAM / TS/ HDRIP / BRRIP -- OK
 //    Rating imdb assez intéressant ? --- OK
 //    etc. ) et envoyer un email contenant les infos des nouveaux films (peut-être fait plus tard).
+//    Aller chercher les catégories
 
     public function setImdbMovie($movieArray, $torrentArray, $imdbId){
 
         $movieRepo = $this->doctrine->getManager()->getRepository('AppBundle:Movie');
-
         $movie = $movieRepo->findByMovieId($movieArray[0]);
 
         if (!$movie){
@@ -196,6 +205,35 @@ class TorrentService {
             $newMovie->setRating($movieArray[5]);
             $newMovie->setNbRates($movieArray[6]);
 
+            $catRepo = $this->doctrine->getManager()->getRepository('AppBundle:Category');
+
+            foreach($movieArray[7] as $category){
+
+                $cat = $catRepo->findOneByName($category);
+
+                if (!$cat){
+
+                    $newCat = new Category();
+                    $newCat->setName($category);
+
+                    $validator = $this->container->get('validator');
+                    $errorList = $validator->validate($newCat);
+
+                    if (count($errorList) > 0) {
+                        return new Response(print_r($errorList, true));
+                    } else {
+                        dump('Category added ! ');
+                        $newMovie->addCategory($newCat);
+                    }
+
+                }else{
+
+                    $newMovie->addCategory($cat);
+
+                }
+
+            }
+
             $validator = $this->container->get('validator');
             $errorList = $validator->validate($newMovie);
 
@@ -203,15 +241,20 @@ class TorrentService {
                 return new Response(print_r($errorList, true));
             } else {
 
-//                $em = $this->doctrine->getEntityManager();
-//                $em->persist($newMovie);
-//                $em->flush();
+                $em = $this->doctrine->getEntityManager();
+                $em->persist($newMovie);
+                $em->flush();
 
                 dump('Movie added ! ');
 
             }
 
+        }else{
+
+            dump('Movie already exists');
+
         }
+
 
         $this->setTorrentMovie($torrentArray, $imdbId);
 
@@ -241,13 +284,17 @@ class TorrentService {
                 return new Response(print_r($errorList, true));
             } else {
 
-//                $em = $this->doctrine->getEntityManager();
-//                $em->persist($newTorrent);
-//                $em->flush();
+                $em = $this->doctrine->getEntityManager();
+                $em->persist($newTorrent);
+                $em->flush();
 
                 dump('torrent added ! ');
 
             }
+
+        }else{
+
+            dump('Torrent already exists');
 
         }
 
