@@ -44,9 +44,9 @@ class TorrentService {
         $crawler = $crawler
             ->filter('.torrentname .markeredBlock.torType.filmType>a:first-child')
             ->reduce(function($nodeCrawler, $i){
-                if($i<5){
+
                     $this->getTorrentFromKickAss($nodeCrawler);
-                }
+
             });
 
     }
@@ -86,26 +86,13 @@ class TorrentService {
                 $seeders = intval($linkCrawler->filter('strong[itemprop="seeders"]')->text());
                 $leechers = intval($linkCrawler->filter('strong[itemprop="leechers"]')->text());
 
-//                $quality = '';
-//                $qualityCheck = $linkCrawler
-//                    ->filter('ul.block.overauto>li:nth-child(2)>span')
-//                    ->each(function($node) use (&$quality){
-//
-//                        if ($node){
-//                            $quality = $node->text();
-//                        }else{
-//                            $quality = 'Not Found';
-//                        }
-//
-//                    });
-
                 $quality = $this->foundQuality($title);
 
                 $torrentArray = array();
 
                 array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality);
 
-                dump($torrentArray);
+//                dump($torrentArray);
 
                 $this->getTorrentFromImdb($imdbId, $torrentArray);
 
@@ -173,11 +160,11 @@ class TorrentService {
         $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
         $ratingCount = $this->commaToDot($ratingCount);
 
-        array_push($movieArray, $imdbId, $title, $dateRelease, $director, $img, $rate, $ratingCount, $category);
+        array_push($movieArray, $title, $dateRelease, $director, $img, $rate, $ratingCount, $category);
 
         dump($movieArray);
 
-        $this->setImdbMovie($movieArray, $torrentArray, $imdbId);
+        $this->setImdbMovie($movieArray, $torrentArray);
 
 
     }
@@ -189,25 +176,24 @@ class TorrentService {
 //    etc. ) et envoyer un email contenant les infos des nouveaux films (peut-être fait plus tard).
 //    Aller chercher les catégories
 
-    public function setImdbMovie($movieArray, $torrentArray, $imdbId){
+    public function setImdbMovie($movieArray, $torrentArray){
 
         $movieRepo = $this->doctrine->getManager()->getRepository('AppBundle:Movie');
-        $movie = $movieRepo->findByMovieId($movieArray[0]);
+        $movie = $movieRepo->findOneByTitle($movieArray[0]);
 
         if (!$movie){
 
             $newMovie = new Movie();
-            $newMovie->setMovieId($imdbId);
-            $newMovie->setTitle($movieArray[1]);
-            $newMovie->setYear($movieArray[2]);
-            $newMovie->setDirector($movieArray[3]);
-            $newMovie->setImgUrl($movieArray[4]);
-            $newMovie->setRating($movieArray[5]);
-            $newMovie->setNbRates($movieArray[6]);
+            $newMovie->setTitle($movieArray[0]);
+            $newMovie->setYear($movieArray[1]);
+            $newMovie->setDirector($movieArray[2]);
+            $newMovie->setImgUrl($movieArray[3]);
+            $newMovie->setRating($movieArray[4]);
+            $newMovie->setNbRates($movieArray[5]);
 
             $catRepo = $this->doctrine->getManager()->getRepository('AppBundle:Category');
 
-            foreach($movieArray[7] as $category){
+            foreach($movieArray[6] as $category){
 
                 $cat = $catRepo->findOneByName($category);
 
@@ -220,10 +206,17 @@ class TorrentService {
                     $errorList = $validator->validate($newCat);
 
                     if (count($errorList) > 0) {
-                        return new Response(print_r($errorList, true));
+                        dump('error cat');
+
                     } else {
+
                         dump('Category added ! ');
+
+                        $em = $this->doctrine->getManager();
+                        $em->persist($newCat);
+                        $em->flush();
                         $newMovie->addCategory($newCat);
+
                     }
 
                 }else{
@@ -234,32 +227,39 @@ class TorrentService {
 
             }
 
+//            dump($newMovie);
+
             $validator = $this->container->get('validator');
             $errorList = $validator->validate($newMovie);
 
             if (count($errorList) > 0) {
-                return new Response(print_r($errorList, true));
+                dump('error movie');
+
             } else {
 
-                $em = $this->doctrine->getEntityManager();
+
+                $em = $this->doctrine->getManager();
                 $em->persist($newMovie);
                 $em->flush();
 
                 dump('Movie added ! ');
 
+                $this->setTorrentMovie($torrentArray, $newMovie);
             }
 
         }else{
 
             dump('Movie already exists');
 
+            $this->setTorrentMovie($torrentArray, $movie);
+
         }
 
 
-        $this->setTorrentMovie($torrentArray, $imdbId);
+
 
     }
-    public function setTorrentMovie($torrentArray, $imdbId){
+    public function setTorrentMovie($torrentArray, $movie){
 
         // checker si le hash du torrent existe dejà en base de données
 
@@ -275,16 +275,17 @@ class TorrentService {
             $newTorrent->setSeeders($torrentArray[3]);
             $newTorrent->setLeechers($torrentArray[4]);
             $newTorrent->setQuality($torrentArray[5]);
-            $newTorrent->setImdbId($imdbId);
+            $newTorrent->setMovie($movie);
 
             $validator = $this->container->get('validator');
             $errorList = $validator->validate($newTorrent);
 
             if (count($errorList) > 0) {
-                return new Response(print_r($errorList, true));
+                dump('error torrent');
+
             } else {
 
-                $em = $this->doctrine->getEntityManager();
+                $em = $this->doctrine->getManager();
                 $em->persist($newTorrent);
                 $em->flush();
 
@@ -313,8 +314,6 @@ class TorrentService {
     }
 
     public function foundQuality($input){
-
-//        dump($input);
 
         $q_array = array('/\bcam\b/', '/\bts\b/', '/hdrip/', '/bdrip/', '/brrip/', '/xvid/', '/dvdrip/','/bluray/', '/webrip/');
 

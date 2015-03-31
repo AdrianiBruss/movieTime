@@ -30,13 +30,12 @@ class Category
     private $name;
 
     /**
-     * @var string
      *
-     * @ORM\ManyToMany(targetEntity="Movie", inversedBy="category")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Movie", mappedBy="categories")
      * @ORM\JoinTable()
      *
      */
-    private $movie;
+    private $movies;
 
 
     /**
@@ -110,5 +109,15 @@ class Category
     public function getMovie()
     {
         return $this->movie;
+    }
+
+    /**
+     * Get movies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMovies()
+    {
+        return $this->movies;
     }
 }

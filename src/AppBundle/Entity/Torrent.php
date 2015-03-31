@@ -59,23 +59,20 @@ class Torrent
     /**
      * @var string
      * @Assert\Choice(callback = "getQualityFunction")
-     * @ORM\Column(name="quality", type="string", length=255)
+     * @ORM\Column(name="quality", type="string", length=255, nullable=true)
      */
     private $quality;
 
     /**
-     * @var integer
-     * @Assert\NotBlank()
-     * @ORM\Column(name="imdbId", type="integer")
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Movie", inversedBy="imdbId")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Movie", inversedBy="torrents", cascade={"persist"})
      */
-    private $imdbId;
+    private $movie;
 
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -220,29 +217,6 @@ class Torrent
         return $this->quality;
     }
 
-    /**
-     * Set imdbId
-     *
-     * @param integer $imdbId
-     * @return Torrent
-     */
-    public function setImdbId($imdbId)
-    {
-        $this->imdbId = $imdbId;
-
-        return $this;
-    }
-
-    /**
-     * Get imdbId
-     *
-     * @return integer 
-     */
-    public function getImdbId()
-    {
-        return $this->imdbId;
-    }
-
 
     /**
      * getQuality function
@@ -254,5 +228,28 @@ class Torrent
         return array('hdrip','bdrip','brrip','xvid','dvdrip','bluray', 'webrip');
     }
 
+    
 
+    /**
+     * Set movie
+     *
+     * @param \AppBundle\Entity\Movie $movie
+     * @return Torrent
+     */
+    public function setMovie(\AppBundle\Entity\Movie $movie = null)
+    {
+        $this->movie = $movie;
+
+        return $this;
+    }
+
+    /**
+     * Get movie
+     *
+     * @return \AppBundle\Entity\Movie 
+     */
+    public function getMovie()
+    {
+        return $this->movie;
+    }
 }

@@ -30,12 +30,9 @@ class Movie
     private $title;
 
     /**
-     * @var integer
-     * @Assert\NotBlank()
-     * @ORM\Column(name="movieId", type="integer")
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Torrent", mappedBy="movieId", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Torrent", mappedBy="movie", cascade={"persist", "remove"})
      */
-    private $movieId;
+    private $torrents;
 
     /**
      * @var integer
@@ -79,10 +76,9 @@ class Movie
     private $nbRates;
 
     /**
-     * @var string
-     * @ORM\ManyToMany(targetEntity="Category", mappedBy="movie", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category", inversedBy="movies", cascade={"persist"})
      */
-    private $category;
+    private $categories;
 
 
     /**
@@ -118,28 +114,6 @@ class Movie
         return $this->title;
     }
 
-    /**
-     * Set movieId
-     *
-     * @param integer $movieId
-     * @return Movie
-     */
-    public function setMovieId($movieId)
-    {
-        $this->movieId = $movieId;
-
-        return $this;
-    }
-
-    /**
-     * Get movieId
-     *
-     * @return integer 
-     */
-    public function getMovieId()
-    {
-        return $this->movieId;
-    }
 
     /**
      * Set year
@@ -260,39 +234,88 @@ class Movie
      */
     public function __construct()
     {
-        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+    
+
     /**
-     * Add category
+     * Set torrents
      *
-     * @param \AppBundle\Entity\Category $category
+     * @param integer $torrents
      * @return Movie
      */
-    public function addCategory(\AppBundle\Entity\Category $category)
+    public function setTorrents($torrents)
     {
-        $this->category[] = $category;
+        $this->torrents = $torrents;
 
         return $this;
     }
 
     /**
-     * Remove category
+     * Get torrents
      *
-     * @param \AppBundle\Entity\Category $category
+     * @return integer 
      */
-    public function removeCategory(\AppBundle\Entity\Category $category)
+    public function getTorrents()
     {
-        $this->category->removeElement($category);
+        return $this->torrents;
     }
 
     /**
-     * Get category
+     * Add torrents
+     *
+     * @param \AppBundle\Entity\Torrent $torrents
+     * @return Movie
+     */
+    public function addTorrent(\AppBundle\Entity\Torrent $torrents)
+    {
+        $this->torrents[] = $torrents;
+
+        return $this;
+    }
+
+    /**
+     * Remove torrents
+     *
+     * @param \AppBundle\Entity\Torrent $torrents
+     */
+    public function removeTorrent(\AppBundle\Entity\Torrent $torrents)
+    {
+        $this->torrents->removeElement($torrents);
+    }
+
+    /**
+     * Add categories
+     *
+     * @param \AppBundle\Entity\Category $categories
+     * @return Movie
+     */
+    public function addCategory(\AppBundle\Entity\Category $categories)
+    {
+        $this->categories[] = $categories;
+        $categories->addMovie($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove categories
+     *
+     * @param \AppBundle\Entity\Category $categories
+     */
+    public function removeCategory(\AppBundle\Entity\Category $categories)
+    {
+        $this->categories->removeElement($categories);
+    }
+
+    /**
+     * Get categories
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getCategory()
+    public function getCategories()
     {
-        return $this->category;
+        return $this->categories;
     }
 }
