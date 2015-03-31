@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block main_content %}
+    <h1>MovieTime</h1>
+    
+    <div class="movies-container">
+
+        {% for movie in movies %}
+
+            <a href="{{ path('showMovie', {"id":movie.id}) }}" class="movie">
+
+                <img src="{{ movie.imgUrl }}" alt="{{ movie.title }}" height="300" width="200"/>
+                <p>{{ movie.title }}</p>
+            </a>
+
+        {% endfor %}
+        
+    </div>
+
+    
+
+{% endblock %}

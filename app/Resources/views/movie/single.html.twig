@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block main_content %}
+
+
+    <a href="{{ path('homepage') }}" class="back-home"></a>
+    <h1>{{ movie.title }}</h1>
+
+    <div class="movie-container">
+
+        <img src="{{ movie.imgUrl }}" alt="{{ movie.title }}"/>
+        <h2>{{ movie.year }}</h2>
+        <h3>{{ movie.director }}</h3>
+        <h4>Rating : {{ movie.rating }} from {{ movie.nbRates }} users</h4>
+        <h5>Torrents avaliable : </h5>
+        <ul>
+            {#{{ dump(movie) }}#}
+            {% for torrent in movie.torrents %}
+
+                <li><a href="{{ torrent.magnet }}">{{ torrent.name }}</a></li>
+
+            {% endfor %}
+        </ul>
+
+    </div>
+
+{% endblock %}
