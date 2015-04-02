@@ -2,17 +2,21 @@
   margin: 0;
   padding: 0;
   font-family: 'Lato', sans-serif;
+  font-weight: 300;
   color: #ffffff;
   text-decoration: none;
 }
 body {
   height: 100vh;
   width: 100%;
-  background-color: #22313f;
+  background-color: #1f2225;
 }
 body h1 {
   text-align: center;
   margin: 10px 0;
+}
+body div.clear {
+  clear: both;
 }
 body a.back-home {
   width: 50px;
@@ -41,19 +45,66 @@ body div.movies-container {
 }
 body div.movies-container a.movie {
   display: inline-block;
-  margin: 5px 2px;
+  margin: 10px 1px;
+}
+body div.movies-container a.movie img {
+  border: 2px solid #1f2225;
 }
 body div.movies-container a.movie:hover {
   opacity: 0.8;
+}
+body div.movies-container a.movie:hover img {
+  border: 2px solid #ffffff;
 }
 body div.movies-container a.movie p {
   width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: center;
+}
+body div.movies-container a.movie p:last-child {
+  font-size: 13px;
+  color: #4c545c;
 }
 body div.movie-container {
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  position: relative;
+}
+body div.movie-container div.movie-cache {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+body div.movie-container div.movie-infos {
+  position: relative;
   width: 800px;
   margin: 50px auto;
+  z-index: 3;
+  padding-top: 100px;
+}
+body div.movie-container div.movie-infos img {
+  float: left;
+  margin-right: 40px;
+}
+body div.movie-container div.movie-infos h1 {
+  text-align: left;
+  font-weight: bold;
+}
+body div.movie-container div.movie-infos h1 .director {
+  font-size: 28px;
+  font-weight: 300;
+}
+body div.movie-container div.movie-infos h2 {
+  font-size: 16px;
+  float: left;
+  margin-right: 5px;
+}
+body div.movie-container div.movie-infos div.torrents {
+  margin-top: 50px;
 }

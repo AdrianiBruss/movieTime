@@ -80,6 +80,13 @@ class Movie
      */
     private $categories;
 
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="backdrops", type="text")
+     */
+    private $backdrops;
+
 
     /**
      * Get id
@@ -317,5 +324,28 @@ class Movie
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Set backdrops
+     *
+     * @param string $backdrops
+     * @return Movie
+     */
+    public function setBackdrops($backdrops)
+    {
+        $this->backdrops = $backdrops;
+
+        return $this;
+    }
+
+    /**
+     * Get backdrops
+     *
+     * @return string 
+     */
+    public function getBackdrops()
+    {
+        return $this->backdrops;
     }
 }

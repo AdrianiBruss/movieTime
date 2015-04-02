@@ -6,21 +6,39 @@
     <a href="{{ path('homepage') }}" class="back-home"></a>
     <h1>{{ movie.title }}</h1>
 
-    <div class="movie-container">
+    <div class="movie-container" style="background-image:url({{ movie.backdrops }})">
 
-        <img src="{{ movie.imgUrl }}" alt="{{ movie.title }}"/>
-        <h2>{{ movie.year }}</h2>
-        <h3>{{ movie.director }}</h3>
-        <h4>Rating : {{ movie.rating }} from {{ movie.nbRates }} users</h4>
-        <h5>Torrents avaliable : </h5>
-        <ul>
-            {#{{ dump(movie) }}#}
-            {% for torrent in movie.torrents %}
+        <div class="movie-cache"></div>
 
-                <li><a href="{{ torrent.magnet }}">{{ torrent.name }}</a></li>
 
-            {% endfor %}
-        </ul>
+        <div class="movie-infos">
+
+            <img src="{{ movie.imgUrl }}" alt="{{ movie.title }}"/>
+            <h1>{{ movie.title }}<span class="director"> - {{ movie.director }}</span></h1>
+            <h2>{{ movie.year }} </h2>
+            <h2>
+                {% for cat in movie.categories %}
+                - {{ cat.name }}
+                {% endfor %}
+            </h2>
+            <br/>
+            <h4>Rating : {{ movie.rating }} from {{ movie.nbRates }} users</h4>
+            <div class="clear"></div>
+            <div class="torrents">
+
+                <p>Torrents avaliables : </p>
+                <ul>
+                    {#{{ dump(movie) }}#}
+                    {% for torrent in movie.torrents %}
+
+                        <li><a href="{{ torrent.magnet }}">{{ torrent.name }}</a></li>
+
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
 
     </div>
 

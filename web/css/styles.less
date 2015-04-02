@@ -2,11 +2,13 @@
   margin: 0;
   padding: 0;
   font-family: 'Lato', sans-serif;
+  font-weight: 300;
   color: @white;
   text-decoration: none;
 }
 @white : #FFF;
-@grey: #22313F;
+@grey: #1f2225;
+@text-grey : #4c545c;
 body{
 
   height: 100vh;
@@ -19,6 +21,10 @@ body{
 //    color: @white;
     margin: 10px 0;
 
+  }
+
+  div.clear{
+    clear:both;
   }
 
   a.back-home{
@@ -54,13 +60,22 @@ body{
     a.movie{
 
       display: inline-block;
-//      text-decoration: none;
-      margin: 5px 2px;
+      margin: 10px 1px;
+
+      img{
+        border: 2px solid @grey;
+      }
 
       &:hover{
 
         opacity: 0.8;
+        
 
+
+      }
+
+      &:hover img{
+        border: 2px solid @white;
       }
 
       p{
@@ -69,8 +84,13 @@ body{
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        text-align: center;
-//        color: @white;
+
+        &:last-child{
+
+          font-size:13px;
+          color: @text-grey;
+
+        }
 
       }
 
@@ -80,11 +100,59 @@ body{
 
 
 
-  div.movie-container{
+  div.movie-container {
 
-    width: 800px;
-    margin: 50px auto;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    position: relative;
 
+    div.movie-cache {
+
+      width: 100%;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 2;
+
+    }
+
+    div.movie-infos {
+
+      position: relative;
+      width: 800px;
+      margin: 50px auto;
+      z-index: 3;
+      padding-top: 100px;
+
+      img{
+        float: left;
+        margin-right: 40px;
+      }
+
+      h1{
+        text-align: left;
+        font-weight: bold;
+        .director{
+          font-size: 28px;
+          font-weight: 300;
+        }
+      }
+      h2{
+        font-size: 16px;
+        float: left;
+        margin-right: 5px;
+      }
+
+      div.torrents{
+
+        margin-top: 50px;
+
+      }
+
+    }
 
   }
 

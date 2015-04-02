@@ -10,15 +10,18 @@ use Goutte\Client;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class TorrentService {
 
 
     protected $doctrine;
     protected $container;
+
     public function __construct($doctrine,Container $container){
         $this->doctrine = $doctrine;
         $this->container = $container;
     }
+
 
 //Infos à parser et à sauvegarder à propos du torrent :
 //- nom du torrent
@@ -44,8 +47,10 @@ class TorrentService {
         $crawler = $crawler
             ->filter('.torrentname .markeredBlock.torType.filmType>a:first-child')
             ->reduce(function($nodeCrawler, $i){
+//                if($i < 3){
 
                     $this->getTorrentFromKickAss($nodeCrawler);
+//                }
 
             });
 
@@ -108,7 +113,6 @@ class TorrentService {
         $client = new Client();
         $linkImbd = $client->request('GET', 'http://www.imdb.com/title/tt'.$imdbId);
 
-
         $title = $linkImbd->filter('h1.header span[itemprop="name"]')->text();
 
         $titleExtra = $linkImbd
@@ -147,10 +151,12 @@ class TorrentService {
         $img = "";
         $imgCheck = $linkImbd
             ->filter('div.image [itemprop="image"]')
+            ->first()
             ->each(function($node) use (&$img){
 
                 if ($node){
                     $img = $node->attr('src');
+//                    dump($img);
                 }
 
             });
@@ -160,7 +166,10 @@ class TorrentService {
         $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
         $ratingCount = $this->commaToDot($ratingCount);
 
-        array_push($movieArray, $title, $dateRelease, $director, $img, $rate, $ratingCount, $category);
+        $backdrops = $this->getBackdrops($imdbId);
+        $backdrops = "http://image.tmdb.org/t/p/w1000".$backdrops;
+
+        array_push($movieArray, $title, $dateRelease, $director, $img, $rate, $ratingCount, $category, $backdrops);
 
         dump($movieArray);
 
@@ -190,6 +199,7 @@ class TorrentService {
             $newMovie->setImgUrl($movieArray[3]);
             $newMovie->setRating($movieArray[4]);
             $newMovie->setNbRates($movieArray[5]);
+            $newMovie->setBackdrops($movieArray[7]);
 
             $catRepo = $this->doctrine->getManager()->getRepository('AppBundle:Category');
 
@@ -236,7 +246,6 @@ class TorrentService {
                 dump('error movie');
 
             } else {
-
 
                 $em = $this->doctrine->getManager();
                 $em->persist($newMovie);
@@ -325,6 +334,20 @@ class TorrentService {
 
         }
 
+    }
+
+    public function getBackdrops($id){
+
+        if( strlen($id) == 6 ){
+            $id_back = "tt0".$id;
+        }else{
+            $id_back = "tt".$id;
+        }
+
+        $backdrops = file_get_contents("https://api.themoviedb.org/3/movie/".$id_back."/images?api_key=a597734de4d095ef5b8860c4fd7050a6", 0, null, null);
+        $jsondecode = json_decode($backdrops);
+        //        http://image.tmdb.org/t/p/w1000/xu9zaAevzQ5nnrsXN6JcahLnG4i.jpg
+        return $jsondecode->backdrops[0]->file_path;
     }
 
 }

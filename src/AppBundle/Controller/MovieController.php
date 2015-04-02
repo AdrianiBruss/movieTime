@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Wtfz\TmdbBundle;
 
 class MovieController extends Controller
 {
@@ -34,7 +35,6 @@ class MovieController extends Controller
 
         $params = array(
             'movie'=>$movie,
-
         );
 
         return $this->render('movie/single.html.twig', $params);
