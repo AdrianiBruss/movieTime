@@ -13,6 +13,7 @@
 @seeders: #87D37C;
 @leechers: #F64747;
 @quality: #AEA8D3;
+@blue: #446CB3;
 
 body{
 
@@ -133,7 +134,7 @@ body{
         width: 800px;
         margin: 50px auto;
         z-index: 3;
-        padding-top: 100px;
+        padding-top: 20px;
 
         span.like-movie{
 
@@ -219,77 +220,86 @@ body{
 
         }
 
-        div.torrents{
+        a.btn-infos{
 
-          margin-top: 50px;
+          width: 130px;
+          height: 30px;
+          background-color: @blue;
+          padding: 10px 20px;
+          font-size: 19px;
+          border-radius: 5px;
+          margin: 50px 10px 0 0;
+          display: inline-block;
+          text-align: center;
+          line-height: 29px;
 
-          table{
+        }
 
-            margin-top: 50px;
-            width: 900px;
+      }
 
-            thead{
-
-              tr{
-
-                margin-bottom: 20px;
-                border-bottom: 1px solid @white;
-
-                td{
-
-                  padding: 0 20px;
-                  font-weight: 500;
-
-                  &:first-child{
-
-                    padding: 0;
-
-                  }
-
-                }
-
-              }
-
-            }
-            tbody{
-
-              tr{
-
-                td{
-
-                  padding: 0 20px;
+      div.torrents{
 
 
-                  &:first-child{
+        width: 100%;
+        height: 300px;
+        background-color: rgba(0,0,0,0.9);
+        position: fixed;
+        z-index: 20;
+        top: 200px;
+        left: 0;
 
-                    padding: 0;
-                    text-align: left;
+        span.close-torrents{
 
-                  }
+          width: 50px;
+          height: 50px;
+          display: block;
+          right: 0;
+          margin: 50px;
+          position: absolute;
+          z-index:4;
+          cursor: pointer;
 
-                  &.quality{
+          &:before, &:after{
+            content:" ";
+            width: 30px;
+            height: 2px;
+            background-color: @white;
+            display: block;
+            transform: rotate(45deg);
+            position: absolute;
+          }
 
-                    color:@quality;
+          &:after{
+            transform: rotate(-45deg);
+          }
 
-                  }
+        }
 
-                  &.seeders{
+        p{
+          text-align: center;
+          margin-top: 20px;
+        }
 
-                    color: @seeders;
+        table{
 
-                  }
+          margin: 50px auto 0 auto;
+          width: 900px;
 
-                  &.leechers{
+          thead{
 
-                    color: @leechers;
+            tr{
 
-                  }
+              margin-bottom: 20px;
+              border-bottom: 1px solid @white;
 
-                  &.remove-torrent{
+              td{
 
-                    text-align: center;
+                padding: 0 10px;
+                font-weight: 500;
 
-                  }
+                &:first-child{
+
+                  padding: 0;
 
                 }
 
@@ -298,6 +308,97 @@ body{
             }
 
           }
+          tbody{
+
+            tr{
+
+              td{
+
+                padding: 0 10px;
+
+
+                &:first-child{
+
+                  padding: 0;
+                  text-align: left;
+
+                }
+
+                &.quality{
+
+                  color:@quality;
+
+                }
+
+                &.seeders{
+
+                  color: @seeders;
+
+                }
+
+                &.leechers{
+
+                  color: @leechers;
+
+                }
+
+                &.remove-torrent{
+
+                  text-align: center;
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+      div.trailer-movie{
+
+        width: 100%;
+        height:400px;
+        background-color: rgba(0,0,0,0.9);
+        position: fixed;
+        z-index: 30;
+        top: 200px;
+        left: 0;
+
+        span.close-trailer{
+
+          width: 50px;
+          height: 50px;
+          display: block;
+          right: 0;
+          margin: 30px 20px 0 0;
+          position: absolute;
+          z-index:4;
+          cursor: pointer;
+
+          &:before, &:after{
+            content:" ";
+            width: 30px;
+            height: 2px;
+            background-color: @white;
+            display: block;
+            transform: rotate(45deg);
+            position: absolute;
+          }
+
+          &:after{
+            transform: rotate(-45deg);
+          }
+
+        }
+
+        iframe{
+
+          margin: 20px auto;
+          display: block;
 
         }
 

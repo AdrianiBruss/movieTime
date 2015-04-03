@@ -93,9 +93,12 @@ class TorrentService {
 
                 $quality = $this->foundQuality($title);
 
+
+                $trailer = $linkCrawler->filter('#tab-trailer>div.center>iframe')->attr('src');
+
                 $torrentArray = array();
 
-                array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality);
+                array_push($torrentArray, $title, $magnet, $infoHash, $seeders, $leechers, $quality, $trailer);
 
 //                dump($torrentArray);
 
@@ -122,6 +125,8 @@ class TorrentService {
                     $title = $this->extraTitle(trim($node->text()));
                 }
             });
+
+
 
         $category = [];
         $categoryCheck = $linkImbd->filter('span[itemprop="genre"]')
@@ -161,9 +166,30 @@ class TorrentService {
 
             });
 
-        $rate = floatval($linkImbd->filter('div.star-box-giga-star')->text());
+        $rate = '';
+        $rateCheck = $linkImbd
+            ->filter('div.star-box-giga-star')
+            ->each(function($node) use (&$rate){
 
-        $ratingCount = $linkImbd->filter('span[itemprop="ratingCount"]')->text();
+                if(!$node){
+                    $rate = null;
+                }else{
+                    $rate = floatval($node->text());
+                }
+
+            });
+
+
+        $ratingCount = '';
+        $ratingCountCheck = $linkImbd
+            ->filter('span[itemprop="ratingCount"]')
+            ->each(function($node) use (&$ratingCount){
+                if (!$node){
+                    $ratingCount = null;
+                }else{
+                    $ratingCount = $node->text();
+                }
+            });
         $ratingCount = $this->commaToDot($ratingCount);
 
         $backdrops = $this->getBackdrops($imdbId);
@@ -200,6 +226,7 @@ class TorrentService {
             $newMovie->setRating($movieArray[4]);
             $newMovie->setNbRates($movieArray[5]);
             $newMovie->setBackdrops($movieArray[7]);
+            $newMovie->setTrailer($torrentArray[6]);
 
             $catRepo = $this->doctrine->getManager()->getRepository('AppBundle:Category');
 

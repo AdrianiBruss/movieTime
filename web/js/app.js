@@ -1,12 +1,10 @@
 (function(){
     'use strict';
-    var app = angular.module('movieTime', ['controllers', 'services', 'directives']);
+    var app = angular.module('movieTime', ['controllers', 'services', 'directives', 'filters']);
 
-    app.run(['dataFactory', 'localService',function(dataFactory, localService){
+    app.run(['dataFactory',function(dataFactory){
 
         dataFactory.getMovies();
-
-        localService.getLocalStorage();
 
     }]);
 

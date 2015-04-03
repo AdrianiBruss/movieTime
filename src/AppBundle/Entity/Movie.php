@@ -87,6 +87,14 @@ class Movie implements \JsonSerializable
      */
     private $backdrops;
 
+    /**
+     * @var string
+     * @ORM\Column(name="trailer", type="text")
+     */
+    private $trailer;
+
+
+
 
     /**
      * Get id
@@ -362,6 +370,8 @@ class Movie implements \JsonSerializable
         $movies['backdrops'] = $this->getBackdrops();
         $movies['show'] = false;
         $movies['like'] = false;
+        $movies['trailer'] = $this->getTrailer();
+        $movies['showTrailer'] = false;
 
         foreach( $this->getCategories() as $cat ){
 
@@ -379,11 +389,35 @@ class Movie implements \JsonSerializable
                 "seeders"=> $torrent->getSeeders(),
                 "leechers"=> $torrent->getLeechers(),
                 "quality"=> $torrent->getQuality(),
+                "show" => false,
             );
 
         }
 
         return $movies;
 
+    }
+
+    /**
+     * Set trailer
+     *
+     * @param string $trailer
+     * @return Movie
+     */
+    public function setTrailer($trailer)
+    {
+        $this->trailer = $trailer;
+
+        return $this;
+    }
+
+    /**
+     * Get trailer
+     *
+     * @return string 
+     */
+    public function getTrailer()
+    {
+        return $this->trailer;
     }
 }

@@ -94,7 +94,7 @@ body div.movies-container div.movie-container div.movie-infos {
   width: 800px;
   margin: 50px auto;
   z-index: 3;
-  padding-top: 100px;
+  padding-top: 20px;
 }
 body div.movies-container div.movie-container div.movie-infos span.like-movie {
   cursor: pointer;
@@ -129,40 +129,121 @@ body div.movies-container div.movie-container div.movie-infos h4.star-4 span.sta
 body div.movies-container div.movie-container div.movie-infos h4 span.star-span:last-child {
   margin-right: 10px;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents {
-  margin-top: 50px;
+body div.movies-container div.movie-container div.movie-infos a.btn-infos {
+  width: 130px;
+  height: 30px;
+  background-color: #446cb3;
+  padding: 10px 20px;
+  font-size: 19px;
+  border-radius: 5px;
+  margin: 50px 10px 0 0;
+  display: inline-block;
+  text-align: center;
+  line-height: 29px;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table {
-  margin-top: 50px;
+body div.movies-container div.movie-container div.torrents {
+  width: 100%;
+  height: 300px;
+  background-color: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  z-index: 20;
+  top: 200px;
+  left: 0;
+}
+body div.movies-container div.movie-container div.torrents span.close-torrents {
+  width: 50px;
+  height: 50px;
+  display: block;
+  right: 0;
+  margin: 50px;
+  position: absolute;
+  z-index: 4;
+  cursor: pointer;
+}
+body div.movies-container div.movie-container div.torrents span.close-torrents:before,
+body div.movies-container div.movie-container div.torrents span.close-torrents:after {
+  content: " ";
+  width: 30px;
+  height: 2px;
+  background-color: #ffffff;
+  display: block;
+  transform: rotate(45deg);
+  position: absolute;
+}
+body div.movies-container div.movie-container div.torrents span.close-torrents:after {
+  transform: rotate(-45deg);
+}
+body div.movies-container div.movie-container div.torrents p {
+  text-align: center;
+  margin-top: 20px;
+}
+body div.movies-container div.movie-container div.torrents table {
+  margin: 50px auto 0 auto;
   width: 900px;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr {
+body div.movies-container div.movie-container div.torrents table thead tr {
   margin-bottom: 20px;
   border-bottom: 1px solid #ffffff;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr td {
-  padding: 0 20px;
+body div.movies-container div.movie-container div.torrents table thead tr td {
+  padding: 0 10px;
   font-weight: 500;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr td:first-child {
+body div.movies-container div.movie-container div.torrents table thead tr td:first-child {
   padding: 0;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td {
-  padding: 0 20px;
+body div.movies-container div.movie-container div.torrents table tbody tr td {
+  padding: 0 10px;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td:first-child {
+body div.movies-container div.movie-container div.torrents table tbody tr td:first-child {
   padding: 0;
   text-align: left;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.quality {
+body div.movies-container div.movie-container div.torrents table tbody tr td.quality {
   color: #aea8d3;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.seeders {
+body div.movies-container div.movie-container div.torrents table tbody tr td.seeders {
   color: #87d37c;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.leechers {
+body div.movies-container div.movie-container div.torrents table tbody tr td.leechers {
   color: #f64747;
 }
-body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.remove-torrent {
+body div.movies-container div.movie-container div.torrents table tbody tr td.remove-torrent {
   text-align: center;
+}
+body div.movies-container div.movie-container div.trailer-movie {
+  width: 100%;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  z-index: 30;
+  top: 200px;
+  left: 0;
+}
+body div.movies-container div.movie-container div.trailer-movie span.close-trailer {
+  width: 50px;
+  height: 50px;
+  display: block;
+  right: 0;
+  margin: 30px 20px 0 0;
+  position: absolute;
+  z-index: 4;
+  cursor: pointer;
+}
+body div.movies-container div.movie-container div.trailer-movie span.close-trailer:before,
+body div.movies-container div.movie-container div.trailer-movie span.close-trailer:after {
+  content: " ";
+  width: 30px;
+  height: 2px;
+  background-color: #ffffff;
+  display: block;
+  transform: rotate(45deg);
+  position: absolute;
+}
+body div.movies-container div.movie-container div.trailer-movie span.close-trailer:after {
+  transform: rotate(-45deg);
+}
+body div.movies-container div.movie-container div.trailer-movie iframe {
+  margin: 20px auto;
+  display: block;
 }

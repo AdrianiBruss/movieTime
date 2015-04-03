@@ -47,7 +47,6 @@
             <br/>
             <h4 class="{{ movie.ratingStar }}">
                 <span ng-repeat="i in [1,2,3,4,5]" class="star-span">
-
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          width="24.062px" height="21.562px" viewBox="-120.322 51.303 24.062 21.562"
                          enable-background="new -120.322 51.303 24.062 21.562" xml:space="preserve">
@@ -60,34 +59,41 @@
                                 C-96.842,60.554-96.653,60.245-96.653,59.893"/>
                         </g>
                     </svg>
-
                 </span>
                 {{ movie.rating }} from {{ movie.nbRates }} users</h4>
+
+
+            <a href="#" class="btn-infos" ng-click="movie.torrents.show = true">Show Torrents</a>
+            <a href="#" class="btn-infos" ng-click="movie.showTrailer = true">Show Trailer</a>
             <div class="clear"></div>
-            <div class="torrents" ng-show="movie.torrents.length">
 
-                <p>Torrents avaliables : </p>
+        </div>
 
-                <table>
-                    <thead>
-                    <tr>
-                        <td>Name</td>
-                        <td>Quality</td>
-                        <td>Seeders</td>
-                        <td>Leechers</td>
-                        <td>Download</td>
-                        <td>Remove</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="torrent in movie.torrents track by $index">
-                        <td>{{ torrent.name }}</td>
-                        <td class="quality">{{ torrent.quality }}</td>
-                        <td class="seeders">{{ torrent.seeders }}</td>
-                        <td class="leechers">{{ torrent.leechers }}</td>
-                        <td class="btn-download">
-                            <a href="{{torrent.magnet}}">
-                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        <div class="torrents" ng-show="movie.torrents.show">
+
+            <span class="close-torrents" ng-click="movie.torrents.show = false"></span>
+            <p>Torrents avaliables</p>
+
+            <table ng-show="movie.torrents.length">
+                <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Quality</td>
+                    <td>Seeders</td>
+                    <td>Leechers</td>
+                    <td>Download</td>
+                    <td>Remove</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="torrent in movie.torrents track by $index">
+                    <td>{{ torrent.name }}</td>
+                    <td class="quality">{{ torrent.quality }}</td>
+                    <td class="seeders">{{ torrent.seeders }}</td>
+                    <td class="leechers">{{ torrent.leechers }}</td>
+                    <td class="btn-download">
+                        <a href="{{torrent.magnet}}">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                          width="70px" height="30px" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve">
                                     <rect fill="none" width="50" height="50"/>
                                     <path fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
@@ -100,24 +106,27 @@
                                     <line fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" x1="25" y1="26" x2="25" y2="45.668"/>
                                 </svg>
 
-                            </a>
-                        </td>
-                        <td class="remove-torrent">
-                            <a href="#" ng-click="movies.removeTorrent($index, $parent.$index)">
-                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                     width="22.25px" height="21.625px" viewBox="187.375 193.5 22.25 21.625" enable-background="new 187.375 193.5 22.25 21.625"
-                                     xml:space="preserve">
-                                    <polygon fill="#FFFFFF" points="207.92,194.2 198.4,203.754 188.846,194.2 188.2,194.846 197.721,204.4 188.2,213.954
-                                        188.846,214.601 198.4,205.046 207.92,214.601 208.601,213.954 199.046,204.4 208.601,194.846 "/>
-                                </svg>
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </a>
+                    </td>
+                    <td class="remove-torrent">
+                        <a href="#" ng-click="movies.removeTorrent($index, $parent.$index)">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                 width="22.25px" height="21.625px" viewBox="187.375 193.5 22.25 21.625" enable-background="new 187.375 193.5 22.25 21.625"
+                                 xml:space="preserve">
+                                <polygon fill="#FFFFFF" points="207.92,194.2 198.4,203.754 188.846,194.2 188.2,194.846 197.721,204.4 188.2,213.954
+                                    188.846,214.601 198.4,205.046 207.92,214.601 208.601,213.954 199.046,204.4 208.601,194.846 "/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-            </div>
+        </div>
 
+        <div class="trailer-movie" ng-show="movie.showTrailer">
+            <span class="close-trailer" ng-click="movie.showTrailer = false"></span>
+            <iframe width="600" height="370" src="{{ movie.trailer | resource }}" frameborder="0" allowfullscreen></iframe>
         </div>
 
     </div>
@@ -129,5 +138,6 @@
 <script src="js/controllers.js"></script>
 <script src="js/services.js"></script>
 <script src="js/directives.js"></script>
+<script src="js/filters.js"></script>
 </body>
 </html>

@@ -25,7 +25,9 @@
             dataFactory.deleteTorrent(this.movie[parent].torrents[index].id);
             this.movie[parent].torrents.splice(index, 1);
 
-        }
+        };
+
+        this.closeTorrent = false;
     }]);
 
 })();

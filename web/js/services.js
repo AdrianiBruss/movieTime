@@ -46,32 +46,4 @@
     }]);
 
 
-    app.service('localService',[, function(){
-
-
-        function getLocalStorage(){
-
-            var local = localStorage.getItem('MovieTime');
-
-            if (local){
-
-
-
-            }
-
-        }
-
-        return {
-
-            getLocalStorage:function(){
-
-                return getLocalStorage();
-
-            }
-
-        }
-
-    }]);
-
-
 })();
