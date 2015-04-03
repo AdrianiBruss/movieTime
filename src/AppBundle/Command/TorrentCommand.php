@@ -21,7 +21,7 @@ class TorrentCommand extends ContainerAwareCommand{
         $container = $this->getContainer();
         $service = $container->get('torrents');
         $torrent = $service->getTorrentInfos();
-        $output->writeln($torrent);
+//        $output->writeln($torrent);
 
     }
 

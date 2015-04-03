@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="AppBundle\Entity\MovieRepository")
  */
-class Movie
+class Movie implements \JsonSerializable
 {
     /**
      * @var integer
@@ -347,5 +347,38 @@ class Movie
     public function getBackdrops()
     {
         return $this->backdrops;
+    }
+
+    public function jsonSerialize(){
+
+        $movies = [];
+        $movies['title'] = $this->getTitle();
+        $movies['year'] = $this->getYear();
+        $movies['director'] = $this->getDirector();
+        $movies['imgUrl'] = $this->getImgUrl();
+        $movies['rating'] = $this->getRating();
+        $movies['nbRates'] = $this->getNbRates();
+        $movies['backdrops'] = $this->getBackdrops();
+        $movies['show'] = false;
+
+        foreach( $this->getCategories() as $cat ){
+
+            $movies['cat'][] = $cat->getName();
+
+        }
+
+        foreach( $this->getTorrents() as $torrent ){
+
+            $movies['torrents']['name'] = $torrent->getName();
+            $movies['torrents']['magnet'] = $torrent->getMagnet();
+            $movies['torrents']['hash'] = $torrent->getHash();
+            $movies['torrents']['seeders'] = $torrent->getSeeders();
+            $movies['torrents']['leechers'] = $torrent->getLeechers();
+            $movies['torrents']['quality'] = $torrent->getQuality();
+
+        }
+
+        return $movies;
+
     }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "movieTime",
+  "version": "1.0.0",
+  "description": "Symfony Standard Edition ========================",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdrianiBruss/movieTime.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdrianiBruss/movieTime/issues"
+  },
+  "homepage": "https://github.com/AdrianiBruss/movieTime"
+}

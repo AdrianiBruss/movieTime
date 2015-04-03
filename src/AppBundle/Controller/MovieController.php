@@ -4,7 +4,10 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wtfz\TmdbBundle;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class MovieController extends Controller
 {
@@ -17,12 +20,10 @@ class MovieController extends Controller
         $moviesRepo = $this->getDoctrine()->getRepository('AppBundle:Movie');
         $movies = $moviesRepo->findAll();
 
-        $params = array(
-            'movies'=>$movies
-        );
+        return new JsonResponse($movies);
 
-        return $this->render('movie/index.html.twig', $params);
     }
+
 
     /**
      * @Route("/movie/{id}", name="showMovie")

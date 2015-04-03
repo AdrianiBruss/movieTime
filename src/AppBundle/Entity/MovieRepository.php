@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class MovieRepository extends EntityRepository
 {
+
+    public function getAllMovies(){
+
+        $qb = $this->createQueryBuilder('a');
+
+        $query = $qb
+            ->where("a.year > 2000")
+            ->getQuery();
+
+        return json_encode(array('movies' => $query->getResult()));
+
+    }
 }
