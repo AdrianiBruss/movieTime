@@ -3,7 +3,7 @@
 
     var app = angular.module('controllers', []);
 
-    app.controller('moviesCtrl', ['dataFactory' , function(dataFactory){
+    app.controller('moviesCtrl', ['dataFactory', '$scope' , function(dataFactory, $scope){
 
         this.movie = [];
 
@@ -15,6 +15,17 @@
 
         });
 
+        this.like = function(like){
+
+            (this.movie[like].like) ? this.movie[like].like = false : this.movie[like].like = true;
+        };
+
+        this.removeTorrent = function(index, parent){
+
+            dataFactory.deleteTorrent(this.movie[parent].torrents[index].id);
+            this.movie[parent].torrents.splice(index, 1);
+
+        }
     }]);
 
 })();

@@ -357,24 +357,29 @@ class Movie implements \JsonSerializable
         $movies['director'] = $this->getDirector();
         $movies['imgUrl'] = $this->getImgUrl();
         $movies['rating'] = $this->getRating();
+        $movies['ratingStar'] = "star-".intval($this->getRating() * .5);
         $movies['nbRates'] = $this->getNbRates();
         $movies['backdrops'] = $this->getBackdrops();
         $movies['show'] = false;
+        $movies['like'] = false;
 
         foreach( $this->getCategories() as $cat ){
 
-            $movies['cat'][] = $cat->getName();
+            $movies['cat'][]['name'] = $cat->getName();
 
         }
 
         foreach( $this->getTorrents() as $torrent ){
 
-            $movies['torrents']['name'] = $torrent->getName();
-            $movies['torrents']['magnet'] = $torrent->getMagnet();
-            $movies['torrents']['hash'] = $torrent->getHash();
-            $movies['torrents']['seeders'] = $torrent->getSeeders();
-            $movies['torrents']['leechers'] = $torrent->getLeechers();
-            $movies['torrents']['quality'] = $torrent->getQuality();
+            $movies['torrents'][] = array(
+                "id"=>$torrent->getId(),
+                "name"=>$torrent->getName(),
+                "magnet"=> $torrent->getMagnet(),
+                "hash"=> $torrent->getHash(),
+                "seeders"=> $torrent->getSeeders(),
+                "leechers"=> $torrent->getLeechers(),
+                "quality"=> $torrent->getQuality(),
+            );
 
         }
 

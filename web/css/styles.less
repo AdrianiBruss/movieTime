@@ -9,6 +9,11 @@
 @white : #FFF;
 @grey: #1f2225;
 @text-grey : #4c545c;
+@silver-star: #BFBFBF;
+@seeders: #87D37C;
+@leechers: #F64747;
+@quality: #AEA8D3;
+
 body{
 
   height: 100vh;
@@ -130,6 +135,26 @@ body{
         z-index: 3;
         padding-top: 100px;
 
+        span.like-movie{
+
+          cursor: pointer;
+
+          &.like{
+
+            svg{
+
+              path{
+
+                fill:@leechers;
+
+              }
+
+            }
+
+          }
+
+        }
+
         img{
           float: left;
           margin-right: 40px;
@@ -143,12 +168,136 @@ body{
             font-weight: 300;
           }
         }
-        h2{
+        h3{
+          margin-top:10px;
+        }
+        h4{
+
+          &.star-3 {
+            span.star-span{
+              &:nth-child(4){
+                svg{
+                  g{
+                    path{
+                      fill:@silver-star;
+                    }
+                  }
+                }
+              }
+              &:last-child{
+                svg{
+                  g{
+                    path{
+                      fill:@silver-star;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          &.star-4{
+            span.star-span{
+
+              &:last-child{
+                svg{
+                  g{
+                    path{
+                      fill:@silver-star;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+
+          span.star-span{
+            &:last-child{
+              margin-right: 10px;
+            }
+          }
+
         }
 
         div.torrents{
 
           margin-top: 50px;
+
+          table{
+
+            margin-top: 50px;
+            width: 900px;
+
+            thead{
+
+              tr{
+
+                margin-bottom: 20px;
+                border-bottom: 1px solid @white;
+
+                td{
+
+                  padding: 0 20px;
+                  font-weight: 500;
+
+                  &:first-child{
+
+                    padding: 0;
+
+                  }
+
+                }
+
+              }
+
+            }
+            tbody{
+
+              tr{
+
+                td{
+
+                  padding: 0 20px;
+
+
+                  &:first-child{
+
+                    padding: 0;
+                    text-align: left;
+
+                  }
+
+                  &.quality{
+
+                    color:@quality;
+
+                  }
+
+                  &.seeders{
+
+                    color: @seeders;
+
+                  }
+
+                  &.leechers{
+
+                    color: @leechers;
+
+                  }
+
+                  &.remove-torrent{
+
+                    text-align: center;
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
 
         }
 

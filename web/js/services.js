@@ -22,13 +22,56 @@
         }
 
 
+        function deleteTorrent(id){
+            // implements method to delete a torrent
+
+            console.log(id);
+            $http.get('app_dev.php/removeTorrent/'+id+'')
+                .success(function(result){
+                    console.log(result);
+                });
+        }
+
+
         return {
             getMovies:function(){
                 return getMovies();
+            },
+            deleteTorrent:function(id){
+                return deleteTorrent(id);
             }
         }
 
 
     }]);
+
+
+    app.service('localService',[, function(){
+
+
+        function getLocalStorage(){
+
+            var local = localStorage.getItem('MovieTime');
+
+            if (local){
+
+
+
+            }
+
+        }
+
+        return {
+
+            getLocalStorage:function(){
+
+                return getLocalStorage();
+
+            }
+
+        }
+
+    }]);
+
 
 })();

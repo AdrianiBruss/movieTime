@@ -42,4 +42,34 @@ class MovieController extends Controller
     }
 
 
+    /**
+     * @Route("/removeTorrent/{id}", name="removeTorrent")
+     */
+    public function removeTorrentAction($id)
+    {
+
+        $torRepo = $this->getDoctrine()->getRepository('AppBundle:Torrent');
+        $torrent = $torRepo->find($id);
+
+        if(!$torrent){
+            $error = array('error'=>'torrent not found');
+            return new JsonResponse($error);
+
+        }else{
+
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($torrent);
+            $em->flush();
+
+            $response = array('result'=>'torrent deleted');
+            return new JsonResponse($response);
+
+        }
+
+
+    }
+
+
+
+
 }

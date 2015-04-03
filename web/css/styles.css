@@ -96,6 +96,12 @@ body div.movies-container div.movie-container div.movie-infos {
   z-index: 3;
   padding-top: 100px;
 }
+body div.movies-container div.movie-container div.movie-infos span.like-movie {
+  cursor: pointer;
+}
+body div.movies-container div.movie-container div.movie-infos span.like-movie.like svg path {
+  fill: #f64747;
+}
 body div.movies-container div.movie-container div.movie-infos img {
   float: left;
   margin-right: 40px;
@@ -108,6 +114,55 @@ body div.movies-container div.movie-container div.movie-infos h1 .director {
   font-size: 28px;
   font-weight: 300;
 }
+body div.movies-container div.movie-container div.movie-infos h3 {
+  margin-top: 10px;
+}
+body div.movies-container div.movie-container div.movie-infos h4.star-3 span.star-span:nth-child(4) svg g path {
+  fill: #bfbfbf;
+}
+body div.movies-container div.movie-container div.movie-infos h4.star-3 span.star-span:last-child svg g path {
+  fill: #bfbfbf;
+}
+body div.movies-container div.movie-container div.movie-infos h4.star-4 span.star-span:last-child svg g path {
+  fill: #bfbfbf;
+}
+body div.movies-container div.movie-container div.movie-infos h4 span.star-span:last-child {
+  margin-right: 10px;
+}
 body div.movies-container div.movie-container div.movie-infos div.torrents {
   margin-top: 50px;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table {
+  margin-top: 50px;
+  width: 900px;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ffffff;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr td {
+  padding: 0 20px;
+  font-weight: 500;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table thead tr td:first-child {
+  padding: 0;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td {
+  padding: 0 20px;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td:first-child {
+  padding: 0;
+  text-align: left;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.quality {
+  color: #aea8d3;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.seeders {
+  color: #87d37c;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.leechers {
+  color: #f64747;
+}
+body div.movies-container div.movie-container div.movie-infos div.torrents table tbody tr td.remove-torrent {
+  text-align: center;
 }
