@@ -15,11 +15,13 @@ class TorrentService {
 
 
     protected $doctrine;
-    protected $container;
+    protected $validator;
+    protected $root_dir;
 
-    public function __construct($doctrine,Container $container){
+    public function __construct($doctrine, $validator, $root_dir){
         $this->doctrine = $doctrine;
-        $this->container = $container;
+        $this->validator = $validator;
+        $this->root_dir;
     }
 
 
@@ -161,7 +163,14 @@ class TorrentService {
 
                 if ($node){
                     $img = $node->attr('src');
-//                    dump($img);
+
+                    $file = file_get_contents($img);
+                    $img = explode('/M/', $img)[1];
+
+                    $fp = fopen(__DIR__."/../../../web/uploads/".$img, "w");
+                    fwrite($fp, $file);
+                    fclose($fp);
+
                 }
 
             });
@@ -239,8 +248,8 @@ class TorrentService {
                     $newCat = new Category();
                     $newCat->setName($category);
 
-                    $validator = $this->container->get('validator');
-                    $errorList = $validator->validate($newCat);
+                    $errorList = $this->validator->validate($newCat);
+
 
                     if (count($errorList) > 0) {
                         dump('error cat');
@@ -266,8 +275,8 @@ class TorrentService {
 
 //            dump($newMovie);
 
-            $validator = $this->container->get('validator');
-            $errorList = $validator->validate($newMovie);
+
+            $errorList = $this->validator->validate($newMovie);
 
             if (count($errorList) > 0) {
                 dump('error movie');
@@ -313,8 +322,7 @@ class TorrentService {
             $newTorrent->setQuality($torrentArray[5]);
             $newTorrent->setMovie($movie);
 
-            $validator = $this->container->get('validator');
-            $errorList = $validator->validate($newTorrent);
+            $errorList = $this->validator->validate($newTorrent);
 
             if (count($errorList) > 0) {
                 dump('error torrent');
@@ -365,16 +373,34 @@ class TorrentService {
 
     public function getBackdrops($id){
 
+        dump('getBackdrops');
+
+
         if( strlen($id) == 6 ){
             $id_back = "tt0".$id;
         }else{
             $id_back = "tt".$id;
         }
 
-        $backdrops = file_get_contents("https://api.themoviedb.org/3/movie/".$id_back."/images?api_key=a597734de4d095ef5b8860c4fd7050a6", 0, null, null);
-        $jsondecode = json_decode($backdrops);
-        //        http://image.tmdb.org/t/p/w1000/xu9zaAevzQ5nnrsXN6JcahLnG4i.jpg
-        return $jsondecode->backdrops[0]->file_path;
+        $url = "https://api.themoviedb.org/3/movie/".$id_back."/images?api_key=a597734de4d095ef5b8860c4fd7050a6";
+
+        dump('get http response');
+
+        if($this->get_http_response_code($url) != "200"){
+            dump('got http response !=200');
+            return $backdrops = null;
+        }else{
+            dump('got http response 200');
+            $backdrops = file_get_contents($url, 0, null, null);
+            $jsondecode = json_decode($backdrops);
+            return $jsondecode->backdrops[0]->file_path;
+        }
+
+    }
+
+    public function get_http_response_code($url) {
+        $headers = get_headers($url);
+        return substr($headers[0], 9, 3);
     }
 
 }

@@ -9,7 +9,7 @@
 
             <a href="{{ path('showMovie', {"id":movie.id}) }}" class="movie">
 
-                <img src="{{ movie.imgUrl }}" alt="{{ movie.title }}" height="300" width="200"/>
+                <img src="uploads/{{ movie.imgUrl }}" alt="{{ movie.title }}" height="300" width="200"/>
                 <p>{{ movie.title }}</p>
                 <p>{{ movie.year }}</p>
             </a>

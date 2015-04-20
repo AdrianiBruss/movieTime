@@ -3,5 +3,6 @@ services:
   torrents: 
     arguments: 
       - "@doctrine"
-      - "@service_container"
+      - "@validator"
+      - "%kernel.root_dir%"
     class: AppBundle\Services\TorrentService

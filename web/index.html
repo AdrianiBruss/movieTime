@@ -14,7 +14,7 @@
 
 
     <a ng-repeat="m in movies.movie" href="#" class="movie" ng-click="m.show = true">
-        <img ng-src="{{ m.imgUrl }}" alt="{{ m.title }}" height="300" width="200"/>
+        <img ng-src="uploads/{{ m.imgUrl }}" alt="{{ m.title }}" height="300" width="200"/>
         <p>{{ m.title }}</p>
         <p>{{ m.year }}</p>
     </a>
@@ -30,7 +30,7 @@
 
         <div class="movie-infos">
 
-            <img ng-src="{{ movie.imgUrl }}" alt="{{ movie.title }}"/>
+            <img ng-src="uploads/{{ movie.imgUrl }}" alt="{{ movie.title }}"/>
             <span class="like-movie" ng-click="movies.like($index)" ng-class="{like: movie.like}">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">

@@ -10,7 +10,6 @@
         var self = this;
         var promise  = dataFactory.getMovies();
         promise.then(function(result){
-            console.log(result);
             self.movie = result;
 
         });
